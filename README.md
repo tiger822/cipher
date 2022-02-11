@@ -3,6 +3,7 @@ a java project for easy to cipher
 
 # Sample
 ## to encrypt/decrypt string
+```
 KeyPair keyPair= RSAUtil.buildKeyPair();
     String publicKeyStr= Base64Utils.encode( keyPair.getPublic().getEncoded());
     String privateKeyStr= Base64Utils.encode(keyPair.getPrivate().getEncoded());
@@ -20,3 +21,4 @@ KeyPair keyPair= RSAUtil.buildKeyPair();
     String plaintext=new String(cipher2.decrypt(encrypted));
     System.out.println("解密后的明文:"+plaintext);
     System.out.println(new String(cipher2.decrypt(e2)));
+```
