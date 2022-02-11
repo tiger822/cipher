@@ -2,9 +2,10 @@ import com.freestyle.cipher.AESUtil;
 import com.freestyle.cipher.Base64Utils;
 import com.freestyle.cipher.CipherUtil;
 import com.freestyle.cipher.RSAUtil;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateCrtKey;
@@ -21,12 +22,15 @@ public class TestRsa {
       sb.append(source).append("\n");
     }
     byte[] b=sb.toString().getBytes();
-    try(ByteOutputStream bos=new ByteOutputStream(size)){
+    try(ByteArrayOutputStream bos=new ByteArrayOutputStream(size)){
       do {
         bos.write(b);
       } while (bos.size() < size);
-      return bos.getBytes();
+      return bos.toByteArray();
+    } catch (IOException e) {
+      e.printStackTrace();
     }
+    return null;
   }
   @Test
   public void testCipher() throws NoSuchAlgorithmException {
