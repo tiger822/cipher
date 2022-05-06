@@ -6,7 +6,7 @@
 
     <groupId>io.github.tiger822</groupId>
     <artifactId>cipher</artifactId>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <name>${project.artifactId} ${project.version}</name>
     <url>https://github.com/tiger822/cipher</url>
     <description>a java project for easy to use cipher.</description>

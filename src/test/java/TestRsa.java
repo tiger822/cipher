@@ -2,6 +2,8 @@ import com.freestyle.cipher.AESUtil;
 import com.freestyle.cipher.Base64Utils;
 import com.freestyle.cipher.CipherUtil;
 import com.freestyle.cipher.RSAUtil;
+import org.apache.commons.lang3.RandomUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -33,6 +35,27 @@ public class TestRsa {
     return null;
   }
   @Test
+  public void testRSAWithSalt() throws NoSuchAlgorithmException {
+    KeyPair keyPair = RSAUtil.buildKeyPair();
+    String publicKeyStr = Base64Utils.encode(keyPair.getPublic().getEncoded());
+    String privateKeyStr = Base64Utils.encode(keyPair.getPrivate().getEncoded());
+    System.out.println("public key:" + publicKeyStr);
+    System.out.println("private key:" + privateKeyStr);
+    CipherUtil cipher1 = new RSAUtil(publicKeyStr);
+    cipher1.initCipher();
+     String rawText = "我是要加密的字符串，This is a string that needs to be encrypted";
+    byte[] encrypted=null;
+    for (int i = 0; i < 3; i++) {
+     encrypted =cipher1.encryptWithSalt(rawText.getBytes());
+    System.out.println("加密后的内容：" + Base64Utils.encode(encrypted));
+    }
+
+    CipherUtil cipher2 = new RSAUtil((RSAPrivateCrtKey) keyPair.getPrivate());
+    cipher2.initCipher();
+    String plaintext = new String(cipher2.decryptWithSalt(encrypted));
+    System.out.println("解密后的明文:" + plaintext);
+  }
+  @Test
   public void testCipher() throws NoSuchAlgorithmException {
     KeyPair keyPair= RSAUtil.buildKeyPair();
     String publicKeyStr= Base64Utils.encode( keyPair.getPublic().getEncoded());
@@ -44,6 +67,7 @@ public class TestRsa {
     String rawText="我是要加密的字符串，This is a string that needs to be encrypted";
     byte[] encrypted= cipher1.encrypt(rawText.getBytes());
     System.out.println("加密后的内容："+Base64Utils.encode(encrypted));
+
     byte[] e2=cipher1.encrypt("String 2".getBytes());
 
     CipherUtil cipher2=new RSAUtil((RSAPrivateCrtKey) keyPair.getPrivate());
@@ -61,7 +85,6 @@ public class TestRsa {
   @Test
   public void testSign() throws NoSuchAlgorithmException {
     String test="this the test that need to protect";
-
     KeyPair keyPair= RSAUtil.buildKeyPair();
     CipherUtil cipherUtil=new RSAUtil((RSAPrivateKey) keyPair.getPrivate());
 
@@ -84,15 +107,20 @@ public class TestRsa {
     CipherUtil aes=new AESUtil(password,iv);
     aes.initCipher();
     byte[] secret=null;
-    for (int i=0;i<3;i++){
-      secret= aes.encrypt(rawText.getBytes());
+    /*for (int i=0;i<3;i++){
+      secret= aes.encryptWithSalt(rawText.getBytes());
       System.out.println("AES加密后:"+Base64Utils.encode(secret));
-    }
+    }*/
+    secret= aes.encrypt(rawText.getBytes());
+    System.out.println("AES加密后:"+Base64Utils.encode(secret));
 
     CipherUtil aesDesc=new AESUtil(password,iv);
     aesDesc.initCipher();
+    //byte[] plaintContent=aesDesc.decryptWithSalt(secret);
     byte[] plaintContent=aesDesc.decrypt(secret);
-    System.out.println("解密后："+new String(plaintContent));
+    String decText=new String(plaintContent);
+    System.out.println("解密后："+decText);
+    Assert.assertEquals(decText,rawText);
 
 
     byte[] b=genBigData(rawText,1024*1024*10);

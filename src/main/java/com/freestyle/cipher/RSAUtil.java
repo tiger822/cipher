@@ -23,7 +23,7 @@ import java.security.spec.X509EncodedKeySpec;
  * 最好不要用RSA加密大数据，速度慢(RSA一次加密数据不能大于245bytes)。推荐AES加密大数据，RSA加密AES密钥
  * Created by rocklee on 2022/2/11 10:01
  */
-public class RSAUtil implements CipherUtil {
+public class RSAUtil extends AbstractCipherUtil {
   private static final Logger logger = LoggerFactory.getLogger(RSAUtil.class);
   private RSAPublicKey publicKey;
   private RSAPrivateKey privateKey;
@@ -109,6 +109,8 @@ public class RSAUtil implements CipherUtil {
     }
   }
 
+
+
   @Override
   public byte[] decrypt(byte[] secret) {
     if (privateKey == null) {
@@ -142,6 +144,7 @@ public class RSAUtil implements CipherUtil {
     }
     return null;
   }
+
 
   @Override
   public void initCipher() {
